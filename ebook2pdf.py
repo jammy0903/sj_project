@@ -128,7 +128,10 @@ def convert_to_pdf(
     html_path  = tmp_dir / "batch.html"
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        try:
+            browser = p.chromium.launch(channel="msedge")
+        except Exception:
+            browser = p.chromium.launch()   # msedge 없으면 번들 Chromium으로 폴백
         pw_page = browser.new_page()
 
         for idx, batch in enumerate(batches, 1):
@@ -183,6 +186,11 @@ def run(
     output_dir  = Path.home() / "Desktop" / "ebook_output"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / f"{book_name}.pdf"
+    # 같은 이름 파일이 이미 열려있거나 존재하면 번호 붙이기
+    counter = 1
+    while output_path.exists():
+        output_path = output_dir / f"{book_name}_{counter}.pdf"
+        counter += 1
 
     tmp_dir = Path(tempfile.mkdtemp(prefix="ebook2pdf_"))
     try:
