@@ -189,7 +189,7 @@ def main():
     total, ext = fetch_book_info(base_url)
     print(f"      총 {total}페이지 ({ext})")
 
-    output_dir  = Path(__file__).parent / "output"
+    output_dir  = Path.home() / "Desktop" / "ebook_output"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / f"{book_name}.pdf"
 
